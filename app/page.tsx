@@ -62,6 +62,16 @@ function toISODate(date: Date) {
   return `${y}-${m}-${d}`
 }
 
+function formatDDMMYYYY(dateStr: string): string {
+  if (!dateStr) return ''
+  const parts = dateStr.split('-')
+  if (parts.length === 3) {
+    const [y, m, d] = parts
+    return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`
+  }
+  return dateStr
+}
+
 function getWeekDays(offset: number) {
   return Array.from({ length: 7 }, (_, index) => {
     const date = new Date(baseWeek)
@@ -896,22 +906,28 @@ export default function Page() {
               {/* Filter by Date, Search & Filter by Status */}
               <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto min-w-0">
                 {/* Filter by Date Picker */}
-                <div className="flex min-w-0 w-full sm:w-auto items-center justify-between sm:justify-start gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 bg-white text-xs">
-                  <div className="flex items-center gap-1.5 shrink-0">
+                <div className="relative flex min-w-0 w-full sm:w-auto items-center justify-between sm:justify-start gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 bg-white text-xs cursor-pointer hover:border-slate-300">
+                  <div className="flex items-center gap-1.5 shrink-0 pointer-events-none">
                     <Calendar size={14} className="text-slate-400 shrink-0" />
                     <span className="text-[11px] font-medium text-slate-500">Date:</span>
                   </div>
+                  <span className="min-w-0 text-xs font-semibold text-slate-700 pointer-events-none">
+                    {dateFilter ? formatDDMMYYYY(dateFilter) : 'DD/MM/YYYY'}
+                  </span>
                   <input
                     type="date"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
-                    className="min-w-0 w-full sm:w-auto bg-transparent text-xs text-slate-700 outline-none"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                   {dateFilter && (
                     <button
-                      onClick={() => setDateFilter('')}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setDateFilter('')
+                      }}
                       aria-label="Clear date filter"
-                      className="text-slate-400 hover:text-slate-600 ml-1 p-0.5 shrink-0"
+                      className="relative z-10 text-slate-400 hover:text-slate-600 ml-1 p-0.5 shrink-0 cursor-pointer"
                     >
                       <X size={13} />
                     </button>
@@ -952,7 +968,7 @@ export default function Page() {
             {/* Active Date Filter Notice */}
             {dateFilter && (
               <div className="bg-emerald-50/70 border-b border-emerald-100 px-4 sm:px-5 py-2 flex items-center justify-between text-xs text-emerald-800 font-medium">
-                <span>Filtering appointments for date: <strong>{dateFilter}</strong></span>
+                <span>Filtering appointments for date: <strong>{formatDDMMYYYY(dateFilter)}</strong></span>
                 <button
                   onClick={() => setDateFilter('')}
                   className="text-emerald-700 hover:underline font-semibold text-xs"
@@ -1007,7 +1023,7 @@ export default function Page() {
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3 min-w-0">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-xs font-bold uppercase tracking-wider text-slate-500 truncate">
-                            {dateFilter ? `Date: ${dateFilter}` : `${activeDay.fullWeekday}, ${activeDay.formattedDate}`}
+                            {dateFilter ? `Date: ${formatDDMMYYYY(dateFilter)}` : `${activeDay.fullWeekday}, ${formatDDMMYYYY(activeDay.isoDate)}`}
                           </span>
                           <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 shrink-0">
                             {activeAppointments.length}
@@ -1197,7 +1213,7 @@ export default function Page() {
                       </div>
                       <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 pl-10.5 text-[11px]">
                         <p className="font-semibold text-slate-600 truncate">
-                          {a.date} · {formatTime(a.start_time)} – {formatTime(a.end_time)}
+                          {formatDDMMYYYY(a.date)} · {formatTime(a.start_time)} – {formatTime(a.end_time)}
                         </p>
                         <span className="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full shrink-0">
                           {a.status}
@@ -1317,13 +1333,24 @@ export default function Page() {
               {/* Date (Required) */}
               <label className="text-xs sm:text-sm font-medium">
                 Date <span className="text-rose-500">*</span>
-                <input
-                  type="date"
-                  required
-                  value={formDate}
-                  onChange={(e) => setFormDate(e.target.value)}
-                  className="mt-1.5 sm:mt-2 w-full rounded-xl border border-slate-200 px-3 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:border-emerald-600"
-                />
+                <div className="relative mt-1.5 sm:mt-2">
+                  <div className="flex items-center justify-between w-full rounded-xl border border-slate-200 px-3 py-2 sm:py-2.5 text-xs sm:text-sm bg-white cursor-pointer hover:border-slate-300">
+                    <span className={formDate ? 'text-slate-800 font-semibold' : 'text-slate-400'}>
+                      {formDate ? formatDDMMYYYY(formDate) : 'DD/MM/YYYY'}
+                    </span>
+                    <Calendar size={16} className="text-slate-400 shrink-0" />
+                  </div>
+                  <input
+                    type="date"
+                    required
+                    value={formDate}
+                    onChange={(e) => setFormDate(e.target.value)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <span className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 sm:mt-1 block">
+                  Format: DD/MM/YYYY {formDate ? `(${formatDDMMYYYY(formDate)})` : ''}
+                </span>
               </label>
 
               {/* Start Time and End Time (Required) */}
