@@ -55,17 +55,19 @@
 
 ### 1. Slot Conflict & Cancellation Logic
 - **Assumption**: A cancelled appointment should remain visible for transparency and historical record, but should **free up its time slot** so another appointment can be scheduled at that time.
-- **Implementation**: Overlap checks enforce:
-  $$\text{start}_{\text{new}} < \text{end}_{\text{existing}} \quad\text{and}\quad \text{end}_{\text{new}} > \text{start}_{\text{existing}}$$
+- **Implementation**: Overlap checks enforce that a new appointment conflicts only if:
+  ```text
+  start_new < end_existing  AND  end_new > start_existing
+  ```
   Only appointments with `status != 'Cancelled'` are checked for collisions.
 
 ### 2. Adjacent Appointments
-- **Assumption**: Back-to-back appointments (e.g., `10:00 AM – 11:00 AM` and `11:00 AM – 12:00 PM`) are valid and common in business scheduling.
+- **Assumption**: Back-to-back appointments (e.g., `10:00 AM – 11:00 AM` followed immediately by `11:00 AM – 12:00 PM`) are valid and common in business scheduling.
 - **Implementation**: Strict inequality (`<` and `>`) is used, allowing contiguous adjacent slots without conflict.
 
 ### 3. Single-Day Boundaries
 - **Assumption**: Appointments start and end on the same calendar day (no overnight shifts spanning across midnight).
-- **Validation**: Enforced via `end_time > start_time` on the client and API levels.
+- **Validation**: Enforced via `end_time > start_time` on both the client form and backend API.
 
 ### 4. Serverless & High-Concurrency Resilience
 - **Assumption**: Small teams need fast, instant response times with minimal infrastructure overhead.
