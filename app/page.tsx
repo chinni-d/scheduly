@@ -661,59 +661,75 @@ export default function Page() {
   const maxWeekDayCount = Math.max(...weekDayCounts, 1)
 
   // Reusable Appointment Card Renderer
+  // Reusable Appointment Card Renderer
   const renderAppointmentCard = (a: Appointment) => {
     const isCancelled = a.status === 'Cancelled'
     const isCompleted = a.status === 'Completed'
     const durationMins = timeToMinutes(a.end_time) - timeToMinutes(a.start_time)
 
+    // Strict 3-color scheme: Green (Completed), Blue (Scheduled), Muted Slate/Black (Cancelled)
+    const cardColorClasses = isCompleted
+      ? 'border border-emerald-300 bg-emerald-50/90 text-emerald-950 shadow-[0_2px_6px_rgba(16,185,129,0.08)]'
+      : isCancelled
+        ? 'border border-slate-300 bg-slate-100/90 text-slate-800 shadow-[0_2px_6px_rgba(100,116,139,0.06)]'
+        : 'border border-blue-200 bg-blue-50/90 text-blue-950 shadow-[0_2px_6px_rgba(59,130,246,0.08)]'
+
+    const badgeColorClasses = isCompleted
+      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+      : isCancelled
+        ? 'bg-slate-200/80 text-slate-700 border border-slate-300'
+        : 'bg-blue-100 text-blue-800 border border-blue-200'
+
     return (
       <div
         key={a.id}
-        className={`group relative mb-2 w-full rounded-xl p-3 text-left shadow-[0_2px_6px_rgba(15,23,42,0.04)] transition hover:-translate-y-0.5 hover:shadow-md ${
-          isCancelled
-            ? 'border border-slate-200 bg-slate-100/90 opacity-75'
-            : isCompleted
-              ? 'border border-emerald-200 bg-emerald-50/90'
-              : toneClasses[a.tone] || 'border border-blue-200 bg-blue-50/90'
-        }`}
+        className={`group relative mb-2 w-full rounded-xl p-3 text-left transition hover:-translate-y-0.5 hover:shadow-md ${cardColorClasses}`}
       >
         <p
           className={`text-xs sm:text-sm font-semibold leading-snug break-words ${
-            isCancelled ? 'line-through text-slate-500' : 'text-slate-800'
+            isCancelled ? 'line-through text-slate-500' : isCompleted ? 'text-emerald-950' : 'text-blue-950'
           }`}
         >
           {a.title}
         </p>
 
         {a.description && (
-          <p className="mt-1 text-[11px] sm:text-xs text-slate-500 break-words">
+          <p
+            className={`mt-1 text-[11px] sm:text-xs break-words ${
+              isCancelled ? 'text-slate-500' : isCompleted ? 'text-emerald-800/80' : 'text-blue-800/80'
+            }`}
+          >
             {a.description}
           </p>
         )}
 
-        <p className="mt-2 text-[11px] sm:text-xs font-medium text-slate-600">
+        <p
+          className={`mt-2 text-[11px] sm:text-xs font-medium ${
+            isCancelled ? 'text-slate-500' : isCompleted ? 'text-emerald-700' : 'text-blue-700'
+          }`}
+        >
           {formatTime(a.start_time)} – {formatTime(a.end_time)} · {minutesToDurationLabel(durationMins)}
         </p>
 
         <div className="mt-2.5 flex items-center justify-between">
           <span
-            className={`inline-block rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold shadow-2xs ${
-              a.status === 'Scheduled'
-                ? 'bg-blue-100 text-blue-800'
-                : a.status === 'Completed'
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-200 text-slate-700'
-            }`}
+            className={`inline-block rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold shadow-2xs ${badgeColorClasses}`}
           >
             {a.status}
           </span>
 
           <div className="flex items-center gap-1">
-            {/* Edit Button (Placed at bottom right next to status) */}
+            {/* Edit Button */}
             <button
               onClick={() => openEditModal(a)}
               aria-label="Edit appointment"
-              className="p-1.5 rounded text-slate-500 hover:text-slate-800 hover:bg-black/5 transition"
+              className={`p-1.5 rounded transition ${
+                isCancelled
+                  ? 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/70'
+                  : isCompleted
+                    ? 'text-emerald-700 hover:text-emerald-950 hover:bg-emerald-100/60'
+                    : 'text-blue-700 hover:text-blue-950 hover:bg-blue-100/60'
+              }`}
             >
               <Edit3 size={14} />
             </button>
@@ -721,7 +737,11 @@ export default function Page() {
             <button
               onClick={() => handleDeleteAppointment(a.id)}
               aria-label="Delete appointment"
-              className="p-1.5 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 opacity-70 md:opacity-0 md:group-hover:opacity-100 transition"
+              className={`p-1.5 rounded opacity-70 md:opacity-0 md:group-hover:opacity-100 transition ${
+                isCancelled
+                  ? 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
+                  : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
+              }`}
             >
               <Trash2 size={14} />
             </button>
