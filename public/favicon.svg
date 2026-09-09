@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#047857"/>
+  <!-- Top header ring binders -->
+  <rect x="16" y="7" width="5" height="10" rx="2.5" fill="#ffffff"/>
+  <rect x="43" y="7" width="5" height="10" rx="2.5" fill="#ffffff"/>
+  <!-- Calendar Body -->
+  <path d="M10 23h44v27a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6V23z" fill="#ffffff"/>
+  <!-- Top banner line -->
+  <rect x="10" y="15" width="44" height="8" rx="2" fill="#059669"/>
+  <!-- Appointment grid blocks -->
+  <rect x="16" y="28" width="8" height="6" rx="2" fill="#10b981"/>
+  <rect x="28" y="28" width="8" height="6" rx="2" fill="#047857"/>
+  <rect x="40" y="28" width="8" height="6" rx="2" fill="#10b981"/>
+  <rect x="16" y="38" width="8" height="6" rx="2" fill="#047857"/>
+  <rect x="28" y="38" width="8" height="6" rx="2" fill="#10b981"/>
+  <rect x="40" y="38" width="8" height="6" rx="2" fill="#059669"/>
+  <rect x="16" y="47" width="8" height="4" rx="2" fill="#10b981"/>
+  <rect x="28" y="47" width="8" height="4" rx="2" fill="#047857"/>
+</svg>
