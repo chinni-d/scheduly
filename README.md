@@ -2,7 +2,7 @@
 
 > A focused, responsive appointment board and booking calendar for small teams. Built with **Next.js**, **FastAPI**, and **PostgreSQL (Neon)**.
 
-🌐 **Live Deployment**: [https://schedulely.manikantadarapureddy.in/](https://schedulely.manikantadarapureddy.in/)
+🌐 **Live Deployment**: [https://schedulely.manikantadarapureddy.in](https://schedulely.manikantadarapureddy.in)
 
 ---
 
@@ -160,8 +160,3 @@ To deploy your own instance:
 3. Under **Project Settings $\rightarrow$ Environment Variables**, add:
    - `DATABASE_URL`: Your PostgreSQL connection string.
 4. Click **Deploy**.
-
----
-
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
